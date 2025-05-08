@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 
 type DesignFeatureType = {
   id: number;
@@ -35,36 +35,11 @@ const DesignSection = () => {
   
   // Initialize array with the correct length
   featureRefs.current = Array(designFeatures.length).fill(null);
-  
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('active');
-          }
-        });
-      },
-      { threshold: 0.2 }
-    );
-    
-    // Observe section
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-    
-    // Observe each feature
-    featureRefs.current.forEach((ref) => {
-      if (ref) observer.observe(ref);
-    });
-    
-    return () => observer.disconnect();
-  }, []);
 
   return (
-    <section id="design" ref={sectionRef} className="section-padding scroll-fade-in">
+    <section id="design" ref={sectionRef} className="section-padding" data-scroll-section>
       <div className="container mx-auto">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <div className="text-center max-w-3xl mx-auto mb-16" data-scroll data-scroll-speed="0.5">
           <h2 className="text-4xl md:text-5xl font-racing font-bold mb-6 text-gradient">
             Design Excellence
           </h2>
@@ -78,22 +53,37 @@ const DesignSection = () => {
             <div 
               key={feature.id}
               ref={el => featureRefs.current[index] = el}
-              className="scroll-fade-in"
-              style={{ animationDelay: `${index * 200}ms` }}
+              data-scroll
+              data-scroll-speed={0.2 + (index * 0.1)}
             >
-              <div className="rounded-lg overflow-hidden mb-6 h-64">
+              <div 
+                className="rounded-lg overflow-hidden mb-6 h-64"
+                data-scroll
+                data-scroll-speed={0.1}
+              >
                 <img 
                   src={feature.imageUrl}
                   alt={feature.title}
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                  data-scroll
+                  data-scroll-direction="horizontal"
+                  data-scroll-speed={index % 2 === 0 ? "-0.2" : "0.2"}
                 />
               </div>
               
-              <h3 className="text-2xl font-racing font-bold mb-3 text-white">
+              <h3 
+                className="text-2xl font-racing font-bold mb-3 text-white"
+                data-scroll
+                data-scroll-speed="0.3"
+              >
                 {feature.title}
               </h3>
               
-              <p className="text-gray-300">
+              <p 
+                className="text-gray-300"
+                data-scroll
+                data-scroll-speed="0.5"
+              >
                 {feature.description}
               </p>
             </div>
@@ -101,10 +91,10 @@ const DesignSection = () => {
         </div>
         
         {/* Design Philosophy Section */}
-        <div className="mt-24 relative scroll-slide-up">
+        <div className="mt-24 relative" data-scroll data-scroll-speed="0.1">
           <div className="absolute inset-0 bg-mclaren-dark-gray/30 rounded-xl" />
           <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 rounded-xl overflow-hidden">
-            <div className="h-64 md:h-auto">
+            <div className="h-64 md:h-auto" data-scroll data-scroll-direction="horizontal" data-scroll-speed="-0.1">
               <img 
                 src="https://images.unsplash.com/photo-1622185135505-2d795003994a?q=80&w=1640&auto=format&fit=crop"
                 alt="McLaren Design Philosophy"
@@ -112,16 +102,30 @@ const DesignSection = () => {
               />
             </div>
             
-            <div className="p-8 md:p-12 flex flex-col justify-center">
-              <h3 className="text-3xl font-racing font-bold mb-4 text-gradient">
+            <div 
+              className="p-8 md:p-12 flex flex-col justify-center"
+              data-scroll
+              data-scroll-speed="0.3"
+            >
+              <h3 
+                className="text-3xl font-racing font-bold mb-4 text-gradient"
+                data-scroll
+                data-scroll-speed="0.4"
+              >
                 Our Design Philosophy
               </h3>
-              <p className="text-gray-300 mb-6">
+              <p 
+                className="text-gray-300 mb-6"
+                data-scroll
+                data-scroll-speed="0.5"
+              >
                 At McLaren, we believe that true beauty comes from genuine engineering purpose. Every line, curve and detail serves a specific function, combining to create vehicles that are as captivating to look at as they are thrilling to drive.
               </p>
               <a 
                 href="#" 
                 className="text-mclaren-orange hover:text-orange-400 font-medium transition-colors"
+                data-scroll
+                data-scroll-speed="0.6"
               >
                 Discover our design process →
               </a>

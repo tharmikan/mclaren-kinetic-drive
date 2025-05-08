@@ -1,16 +1,19 @@
-
 import React, { useEffect } from 'react';
 import HeroSection from '@/components/HeroSection';
 import ModelSection from '@/components/ModelSection';
 import SpeedSection from '@/components/SpeedSection';
 import DesignSection from '@/components/DesignSection';
 import Navbar from '@/components/Navbar';
-import { initScrollAnimations } from '@/utils/scrollAnimation';
 import { ArrowUp } from 'lucide-react';
+import { useLocomotiveScroll } from '@/hooks/useLocomotiveScroll';
+import 'locomotive-scroll/dist/locomotive-scroll.css';
 
 const Index = () => {
-  // Initialize scroll animations
-  initScrollAnimations();
+  const { containerRef } = useLocomotiveScroll({
+    smooth: true,
+    multiplier: 1,
+    lerp: 0.1,
+  });
   
   // Scroll to top button functionality
   const [showScrollButton, setShowScrollButton] = React.useState(false);
@@ -36,7 +39,11 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-mclaren-dark custom-scrollbar overflow-x-hidden">
+    <div 
+      ref={containerRef as React.RefObject<HTMLDivElement>}
+      className="min-h-screen bg-mclaren-dark custom-scrollbar overflow-x-hidden" 
+      data-scroll-container
+    >
       <Navbar />
       <main>
         <HeroSection />
@@ -44,18 +51,20 @@ const Index = () => {
         <SpeedSection />
         <DesignSection />
         
-        <section id="history" className="section-padding text-center">
-          <div className="container mx-auto max-w-4xl scroll-fade-in">
-            <h2 className="text-4xl md:text-5xl font-racing font-bold mb-8 text-gradient">
+        <section id="history" className="section-padding text-center" data-scroll-section>
+          <div className="container mx-auto max-w-4xl" data-scroll data-scroll-speed="1">
+            <h2 className="text-4xl md:text-5xl font-racing font-bold mb-8 text-gradient"
+                data-scroll data-scroll-speed="0.5">
               A Legacy of Excellence
             </h2>
-            <p className="text-gray-300 text-lg mb-10">
+            <p className="text-gray-300 text-lg mb-10" data-scroll data-scroll-speed="0.8">
               From our Formula 1 origins to our groundbreaking road cars, McLaren's history 
               is defined by a relentless pursuit of perfection and innovation.
             </p>
             <a 
               href="#" 
               className="inline-block bg-mclaren-dark-gray/50 hover:bg-mclaren-orange/90 text-white font-medium py-3 px-6 rounded-md transition-colors duration-300"
+              data-scroll data-scroll-speed="1.2"
             >
               Explore Our Heritage
             </a>
@@ -63,7 +72,7 @@ const Index = () => {
         </section>
       </main>
       
-      <footer className="bg-mclaren-dark-gray/50 py-10">
+      <footer className="bg-mclaren-dark-gray/50 py-10" data-scroll-section>
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-6 md:mb-0">

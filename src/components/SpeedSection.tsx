@@ -1,7 +1,7 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { Gauge } from 'lucide-react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 type SpeedSpecType = {
   title: string;
@@ -40,15 +40,6 @@ const SpeedSection = () => {
       icon: <Gauge className="h-8 w-8 text-mclaren-orange" />
     }
   ];
-  
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start end", "end start"]
-  });
-
-  const backgroundOpacity = useTransform(scrollYProgress, [0, 0.5], [0.1, 0.3]);
-  const contentOpacity = useTransform(scrollYProgress, [0.1, 0.3], [0, 1]);
-  const contentY = useTransform(scrollYProgress, [0.1, 0.3], [50, 0]);
   
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -106,25 +97,25 @@ const SpeedSection = () => {
   }, [isVisible, speedSpecs]);
 
   return (
-    <section id="performance" ref={sectionRef} className="relative py-20 scroll-fade-in">
-      <motion.div 
+    <section id="performance" ref={sectionRef} className="relative py-20" data-scroll-section>
+      <div 
         className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1626409325900-31965771d82a?q=80&w=1632&auto=format&fit=crop')] bg-fixed bg-cover bg-center"
-        style={{ opacity: backgroundOpacity }}
+        data-scroll
+        data-scroll-speed="-0.3"
       />
       
       <div className="absolute inset-0 bg-gradient-to-t from-mclaren-dark via-mclaren-dark/90 to-mclaren-dark/90" />
       
-      <motion.div 
-        className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10"
-        style={{ opacity: contentOpacity, y: contentY }}
-      >
-        <div className="text-center max-w-3xl mx-auto mb-16">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="text-center max-w-3xl mx-auto mb-16" data-scroll data-scroll-speed="0.5">
           <motion.h2 
             className="text-4xl md:text-5xl font-racing font-bold mb-6 text-gradient"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             viewport={{ once: true }}
+            data-scroll
+            data-scroll-speed="0.7"
           >
             Unmatched Performance
           </motion.h2>
@@ -134,12 +125,14 @@ const SpeedSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
             viewport={{ once: true }}
+            data-scroll
+            data-scroll-speed="0.9"
           >
             McLaren's relentless pursuit of performance creates cars that deliver exhilarating driving experiences through innovative engineering and lightweight design.
           </motion.p>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 scroll-slide-up">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           {speedSpecs.map((spec, index) => (
             <motion.div 
               key={index}
@@ -148,6 +141,8 @@ const SpeedSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
               viewport={{ once: true }}
+              data-scroll
+              data-scroll-speed={0.2 + (index * 0.1)}
             >
               <div className="flex justify-center mb-4">
                 {spec.icon}
@@ -162,7 +157,7 @@ const SpeedSection = () => {
             </motion.div>
           ))}
         </div>
-      </motion.div>
+      </div>
     </section>
   );
 };
