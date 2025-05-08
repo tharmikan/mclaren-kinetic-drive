@@ -2,6 +2,6 @@
 import { createRoot } from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
-import './styles/locomotive-scroll.css'
+import './styles/scroll-animations.css'
 
 createRoot(document.getElementById("root")!).render(<App />);

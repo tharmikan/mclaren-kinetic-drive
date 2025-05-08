@@ -1,7 +1,8 @@
 
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { motion } from 'framer-motion';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap-trial/ScrollTrigger';
 
 type ModelType = {
   id: number;
@@ -43,87 +44,113 @@ const ModelSection = () => {
   // Initialize array with the correct length
   modelRefs.current = Array(models.length).fill(null);
 
-  const getAnimationProps = (index: number) => {
-    return {
-      initial: { opacity: 0, y: 100 },
-      whileInView: { opacity: 1, y: 0 },
-      transition: { 
+  useEffect(() => {
+    if (!sectionRef.current) return;
+    
+    // Animate the section title
+    gsap.fromTo(
+      ".section-title",
+      { opacity: 0, y: 50 },
+      { 
+        opacity: 1, 
+        y: 0, 
         duration: 0.8, 
-        delay: 0.1 * index,
-        type: "spring",
-        stiffness: 50
-      },
-      viewport: { once: true, margin: "-100px" }
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 75%",
+        }
+      }
+    );
+    
+    // Animate each model card
+    modelRefs.current.forEach((modelRef, index) => {
+      if (!modelRef) return;
+      
+      // Image animation
+      gsap.fromTo(
+        modelRef.querySelector('.model-image'),
+        { scale: 0.9, opacity: 0.5 },
+        { 
+          scale: 1, 
+          opacity: 1, 
+          duration: 1.2,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: modelRef,
+            start: "top 80%",
+            end: "bottom 20%",
+            toggleActions: "play none none none",
+          }
+        }
+      );
+      
+      // Text content animation with staggered effect
+      gsap.fromTo(
+        modelRef.querySelectorAll('.model-content > *'),
+        { 
+          x: index % 2 === 0 ? 50 : -50, 
+          opacity: 0 
+        },
+        { 
+          x: 0, 
+          opacity: 1, 
+          stagger: 0.15,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: modelRef,
+            start: "top 75%",
+            end: "bottom 20%",
+            toggleActions: "play none none none",
+          }
+        }
+      );
+    });
+    
+    return () => {
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
-  };
+  }, []);
 
   return (
-    <section id="models" ref={sectionRef} className="section-padding" data-scroll-section>
+    <section id="models" ref={sectionRef} className="section-padding py-20">
       <div className="container mx-auto">
-        <h2 
-          className="text-4xl md:text-5xl font-racing font-bold mb-16 text-center text-gradient"
-          data-scroll data-scroll-speed="0.5"
-          data-scroll-position="top"
-        >
+        <h2 className="text-4xl md:text-5xl font-racing font-bold mb-16 text-center text-gradient section-title">
           Exceptional Models
         </h2>
         
         <div className="space-y-32 md:space-y-40">
           {models.map((model, index) => (
-            <motion.div 
+            <div 
               key={model.id} 
               ref={el => modelRefs.current[index] = el}
               className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} 
                 gap-8 md:gap-12 items-center`}
-              {...getAnimationProps(index)}
-              data-scroll
-              data-scroll-speed={0.2 + (index * 0.1)}
             >
-              <div className="w-full md:w-1/2" data-scroll data-scroll-direction="horizontal" data-scroll-speed={index % 2 === 0 ? "-0.2" : "0.2"}>
-                <motion.div 
-                  className="overflow-hidden rounded-lg"
-                  whileInView={{ scale: [0.9, 1] }}
-                  transition={{ duration: 0.7 }}
-                  viewport={{ once: true }}
-                >
-                  <motion.img 
+              <div className="w-full md:w-1/2">
+                <div className="overflow-hidden rounded-lg">
+                  <img 
                     src={model.imageUrl} 
                     alt={model.name} 
-                    className="w-full h-[300px] md:h-[400px] object-cover"
-                    whileInView={{ scale: [1, 1.05] }}
-                    transition={{ duration: 5, ease: "easeOut" }}
-                    viewport={{ once: true }}
-                    data-scroll
-                    data-scroll-speed="0.1"
+                    className="w-full h-[300px] md:h-[400px] object-cover model-image"
                   />
-                </motion.div>
+                </div>
               </div>
               
-              <motion.div 
-                className={`w-full md:w-1/2`}
-                whileInView={{ x: [index % 2 === 0 ? 50 : -50, 0], opacity: [0, 1] }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-                viewport={{ once: true }}
-                data-scroll
-                data-scroll-speed={0.5 + (index * 0.1)}
-              >
-                <h3 className="text-3xl md:text-4xl font-racing font-bold mb-2" data-scroll data-scroll-speed="0.3">
+              <div className={`w-full md:w-1/2 model-content`}>
+                <h3 className="text-3xl md:text-4xl font-racing font-bold mb-2">
                   {model.name}
                 </h3>
-                <p className="text-mclaren-orange text-xl mb-4" data-scroll data-scroll-speed="0.5">{model.tagline}</p>
-                <p className="text-gray-300 mb-6" data-scroll data-scroll-speed="0.7">{model.description}</p>
-                <motion.a 
+                <p className="text-mclaren-orange text-xl mb-4">{model.tagline}</p>
+                <p className="text-gray-300 mb-6">{model.description}</p>
+                <a 
                   href="#" 
                   className="inline-block border-b-2 border-mclaren-orange text-white hover:text-mclaren-orange transition-colors duration-300"
-                  whileHover={{ x: 5 }}
-                  transition={{ duration: 0.3 }}
-                  data-scroll
-                  data-scroll-speed="0.9"
                 >
                   Discover More
-                </motion.a>
-              </motion.div>
-            </motion.div>
+                </a>
+              </div>
+            </div>
           ))}
         </div>
       </div>
