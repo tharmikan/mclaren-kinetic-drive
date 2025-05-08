@@ -1,6 +1,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 type ModelType = {
   id: number;
@@ -42,6 +43,14 @@ const ModelSection = () => {
   // Initialize array with the correct length
   modelRefs.current = Array(models.length).fill(null);
   
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+
+  const headerOpacity = useTransform(scrollYProgress, [0.1, 0.2], [0, 1]);
+  const headerY = useTransform(scrollYProgress, [0.1, 0.2], [50, 0]);
+  
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -64,45 +73,78 @@ const ModelSection = () => {
     return () => observer.disconnect();
   }, [isMobile]);
 
+  const getAnimationProps = (index: number) => {
+    return {
+      initial: { opacity: 0, y: 100 },
+      whileInView: { opacity: 1, y: 0 },
+      transition: { 
+        duration: 0.8, 
+        delay: 0.1 * index,
+        type: "spring",
+        stiffness: 50
+      },
+      viewport: { once: true, margin: "-100px" }
+    };
+  };
+
   return (
     <section id="models" ref={sectionRef} className="section-padding scroll-fade-in">
       <div className="container mx-auto">
-        <h2 className="text-4xl md:text-5xl font-racing font-bold mb-16 text-center text-gradient">
+        <motion.h2 
+          className="text-4xl md:text-5xl font-racing font-bold mb-16 text-center text-gradient"
+          style={{ opacity: headerOpacity, y: headerY }}
+        >
           Exceptional Models
-        </h2>
+        </motion.h2>
         
         <div className="space-y-32 md:space-y-40">
           {models.map((model, index) => (
-            <div 
+            <motion.div 
               key={model.id} 
               ref={el => modelRefs.current[index] = el}
               className={`flex flex-col ${index % 2 === 0 ? 'md:flex-row' : 'md:flex-row-reverse'} 
-                gap-8 md:gap-12 items-center scroll-fade-in`}
+                gap-8 md:gap-12 items-center`}
+              {...getAnimationProps(index)}
             >
               <div className="w-full md:w-1/2">
-                <div className="overflow-hidden rounded-lg">
-                  <img 
+                <motion.div 
+                  className="overflow-hidden rounded-lg"
+                  whileInView={{ scale: [0.9, 1] }}
+                  transition={{ duration: 0.7 }}
+                  viewport={{ once: true }}
+                >
+                  <motion.img 
                     src={model.imageUrl} 
                     alt={model.name} 
-                    className="w-full h-[300px] md:h-[400px] object-cover hover:scale-105 transition-transform duration-700"
+                    className="w-full h-[300px] md:h-[400px] object-cover"
+                    whileInView={{ scale: [1, 1.05] }}
+                    transition={{ duration: 5, ease: "easeOut" }}
+                    viewport={{ once: true }}
                   />
-                </div>
+                </motion.div>
               </div>
               
-              <div className={`w-full md:w-1/2 ${index % 2 === 0 ? 'scroll-slide-right' : 'scroll-slide-left'}`}>
+              <motion.div 
+                className={`w-full md:w-1/2`}
+                whileInView={{ x: [index % 2 === 0 ? 50 : -50, 0], opacity: [0, 1] }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+                viewport={{ once: true }}
+              >
                 <h3 className="text-3xl md:text-4xl font-racing font-bold mb-2">
                   {model.name}
                 </h3>
                 <p className="text-mclaren-orange text-xl mb-4">{model.tagline}</p>
                 <p className="text-gray-300 mb-6">{model.description}</p>
-                <a 
+                <motion.a 
                   href="#" 
                   className="inline-block border-b-2 border-mclaren-orange text-white hover:text-mclaren-orange transition-colors duration-300"
+                  whileHover={{ x: 5 }}
+                  transition={{ duration: 0.3 }}
                 >
                   Discover More
-                </a>
-              </div>
-            </div>
+                </motion.a>
+              </motion.div>
+            </motion.div>
           ))}
         </div>
       </div>
