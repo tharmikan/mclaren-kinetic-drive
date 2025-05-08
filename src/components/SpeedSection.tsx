@@ -1,6 +1,5 @@
-
 import React, { useEffect, useRef, useState } from 'react';
-import { Speedometer } from 'lucide-react';
+import { Gauge } from 'lucide-react';
 
 type SpeedSpecType = {
   title: string;
@@ -18,25 +17,25 @@ const SpeedSection = () => {
       title: "Top Speed",
       value: 341,
       unit: "km/h",
-      icon: <Speedometer className="h-8 w-8 text-mclaren-orange" />
+      icon: <Gauge className="h-8 w-8 text-mclaren-orange" />
     },
     {
       title: "0-100 km/h",
       value: 2.9,
       unit: "seconds",
-      icon: <Speedometer className="h-8 w-8 text-mclaren-orange" />
+      icon: <Gauge className="h-8 w-8 text-mclaren-orange" />
     },
     {
       title: "Horsepower",
       value: 720,
       unit: "hp",
-      icon: <Speedometer className="h-8 w-8 text-mclaren-orange" />
+      icon: <Gauge className="h-8 w-8 text-mclaren-orange" />
     },
     {
       title: "Torque",
       value: 770,
       unit: "Nm",
-      icon: <Speedometer className="h-8 w-8 text-mclaren-orange" />
+      icon: <Gauge className="h-8 w-8 text-mclaren-orange" />
     }
   ];
   
