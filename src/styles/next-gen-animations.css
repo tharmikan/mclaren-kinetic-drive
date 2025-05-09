@@ -45,6 +45,34 @@
   transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
+/* Enhanced 3D Tagline Animation */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.tagline-3d {
+  transform-style: preserve-3d;
+}
+
+.tagline-word {
+  display: inline-block;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.6));
+  letter-spacing: 0.05em;
+  position: relative;
+}
+
+.tagline-word::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translateZ(-10px);
+  opacity: 0.5;
+  filter: blur(2px);
+}
+
 /* Enhanced Scroll-Reveal Animations */
 .reveal-up {
   opacity: 0;

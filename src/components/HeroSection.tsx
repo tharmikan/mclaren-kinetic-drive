@@ -11,6 +11,7 @@ const HeroSection = () => {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const backgroundRef = useRef<HTMLDivElement>(null);
   const arrowRef = useRef<HTMLDivElement>(null);
+  const taglineRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
     // Split text animation functionality
@@ -42,14 +43,56 @@ const HeroSection = () => {
     if (headingRef.current) createSplitText(headingRef.current);
     if (subheadingRef.current) createSplitText(subheadingRef.current);
     
-    // Animate with sequence and better timing
+    // 3D Tagline animation
+    if (taglineRef.current) {
+      const taglineWords = taglineRef.current.querySelectorAll('.tagline-word');
+      
+      gsap.set(taglineWords, { 
+        transformPerspective: 1000,
+        transformStyle: "preserve-3d"
+      });
+      
+      tl.fromTo(
+        taglineWords,
+        { 
+          opacity: 0, 
+          rotationX: -90,
+          y: -50
+        },
+        { 
+          opacity: 1, 
+          rotationX: 0,
+          y: 0,
+          stagger: 0.2, 
+          duration: 1.2,
+          ease: "back.out(1.7)"
+        },
+        0
+      );
+
+      // Add continuous subtle floating animation
+      taglineWords.forEach((word, i) => {
+        gsap.to(word, {
+          y: "+=5",
+          rotationX: "+=3",
+          rotationY: "+=3",
+          duration: 2 + i * 0.2,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut"
+        });
+      });
+    }
+    
+    // Continue with other animations
     tl.to(
       '.split-text-container',
       { 
         className: '+=is-visible',
         stagger: 0.03,
         duration: 0.1
-      }
+      },
+      "-=0.5"
     ).fromTo(
       buttonRef.current,
       { y: 30, opacity: 0 },
@@ -135,6 +178,18 @@ const HeroSection = () => {
           ref={backgroundRef}
           className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1634543392603-d55409339466?q=80&w=1632&auto=format&fit=crop')] bg-cover bg-center parallax-deep brightness-75"
         />
+      </div>
+
+      {/* Animated 3D Tagline */}
+      <div 
+        ref={taglineRef}
+        className="absolute top-16 left-0 right-0 z-30 flex justify-center items-center overflow-hidden"
+      >
+        <div className="flex space-x-4 md:space-x-6 perspective-1000 tagline-3d">
+          <span className="tagline-word font-racing text-lg md:text-2xl lg:text-3xl text-white font-bold text-shadow-lg">Precision.</span>
+          <span className="tagline-word font-racing text-lg md:text-2xl lg:text-3xl text-mclaren-orange font-bold text-shadow-lg">Power.</span>
+          <span className="tagline-word font-racing text-lg md:text-2xl lg:text-3xl text-white font-bold text-shadow-lg">Perfection.</span>
+        </div>
       </div>
 
       {/* Content with enhanced text visibility */}
