@@ -118,7 +118,7 @@
   transform: scale(1.05);
 }
 
-/* Split Text Animation Effect */
+/* Split Text Animation Effect - Improved visibility */
 .split-text-container {
   overflow: hidden;
   display: inline-block;
@@ -129,6 +129,7 @@
   opacity: 0;
   transform: translateY(100%);
   transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.5, 0, 0.3, 1);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .split-text-container.is-visible .split-text-inner {

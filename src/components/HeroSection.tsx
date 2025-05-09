@@ -109,7 +109,7 @@ const HeroSection = () => {
     const modelsSection = document.getElementById('models');
     if (modelsSection) {
       // Enhanced Lenis smooth scroll with options
-      const lenis = (window as any).lenis;
+      const lenis = window.lenis;
       if (lenis) {
         lenis.scrollTo(modelsSection, { 
           offset: -50,
@@ -128,28 +128,28 @@ const HeroSection = () => {
       ref={sectionRef} 
       className="relative h-screen flex items-center justify-center overflow-hidden"
     >
-      {/* Advanced Video Background with Enhanced Parallax Effect */}
+      {/* Enhanced Background with Darker Overlay */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-t from-mclaren-dark via-mclaren-dark/70 to-transparent z-10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-mclaren-dark via-mclaren-dark/80 to-mclaren-dark/60 z-10" />
         <div 
           ref={backgroundRef}
-          className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1634543392603-d55409339466?q=80&w=1632&auto=format&fit=crop')] bg-cover bg-center parallax-deep"
+          className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1634543392603-d55409339466?q=80&w=1632&auto=format&fit=crop')] bg-cover bg-center parallax-deep brightness-75"
         />
       </div>
 
-      {/* Content with enhanced animations */}
+      {/* Content with enhanced text visibility */}
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
         <div className="text-center max-w-3xl mx-auto">
           <h1 
             ref={headingRef}
-            className="font-racing text-5xl md:text-7xl font-bold mb-6"
+            className="font-racing text-5xl md:text-7xl font-bold mb-6 text-shadow-lg"
           >
-            <span className="text-gradient">KINETIC</span> DRIVE
+            <span className="text-gradient">KINETIC</span> <span className="text-white">DRIVE</span>
           </h1>
           
           <p 
             ref={subheadingRef}
-            className="text-xl md:text-2xl mb-10 text-gray-300"
+            className="text-xl md:text-2xl mb-10 text-gray-100 text-shadow-md"
           >
             Experience the engineering excellence and speed that defines McLaren automotive innovation
           </p>
@@ -157,7 +157,7 @@ const HeroSection = () => {
           <button 
             ref={buttonRef}
             onClick={scrollToModels}
-            className="bg-mclaren-orange hover:bg-mclaren-orange-dark text-white font-bold py-3 px-8 rounded-md transition-all duration-300 flex items-center mx-auto hover-lift"
+            className="bg-mclaren-orange hover:bg-mclaren-orange-dark text-white font-bold py-3 px-8 rounded-md transition-all duration-300 flex items-center mx-auto hover-lift shadow-lg"
           >
             Explore Models
             <ArrowDown className="ml-2 h-5 w-5" />
@@ -170,7 +170,7 @@ const HeroSection = () => {
         ref={arrowRef} 
         className="absolute bottom-10 left-1/2 transform -translate-x-1/2"
       >
-        <ArrowDown className="h-6 w-6 text-mclaren-orange animate-bounce" />
+        <ArrowDown className="h-6 w-6 text-mclaren-orange animate-bounce shadow-lg" />
       </div>
     </section>
   );
