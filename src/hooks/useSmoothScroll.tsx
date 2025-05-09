@@ -7,6 +7,22 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 // Register the ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
 
+// Define the scroll data type
+interface ScrollData {
+  current: number;
+  velocity: number;
+  progress: number;
+  direction: number;
+}
+
+// Extend the Window interface to include our custom properties
+declare global {
+  interface Window {
+    scrollData?: ScrollData;
+    lenis?: Lenis;
+  }
+}
+
 export function useSmoothScroll() {
   const [lenis, setLenis] = useState<Lenis | null>(null);
   const reqIdRef = useRef<number | null>(null);
@@ -75,7 +91,7 @@ export function useSmoothScroll() {
     resizeObserver.observe(document.documentElement);
 
     // Store lenis instance in window for global access
-    (window as any).lenis = lenisInstance;
+    window.lenis = lenisInstance;
 
     // Clean up with enhanced memory management
     return () => {
@@ -86,8 +102,8 @@ export function useSmoothScroll() {
       lenisInstance.destroy();
       resizeObserver.disconnect();
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-      delete (window as any).lenis;
-      delete (window as any).scrollData;
+      delete window.lenis;
+      delete window.scrollData;
     };
   }, []);
 

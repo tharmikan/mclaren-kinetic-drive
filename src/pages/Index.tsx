@@ -71,7 +71,7 @@ const Index = () => {
     const magneticElements = document.querySelectorAll('.magnetic');
     
     magneticElements.forEach(elem => {
-      elem.addEventListener('mousemove', (e) => {
+      elem.addEventListener('mousemove', (e: MouseEvent) => {
         const target = e.currentTarget as HTMLElement;
         const rect = target.getBoundingClientRect();
         const x = e.clientX - rect.left - rect.width / 2;
