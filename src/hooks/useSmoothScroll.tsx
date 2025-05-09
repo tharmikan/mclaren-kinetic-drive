@@ -12,19 +12,21 @@ export function useSmoothScroll() {
   const reqIdRef = useRef<number | null>(null);
 
   useEffect(() => {
-    // Initialize Lenis for smooth scrolling
+    // Initialize Lenis for smooth scrolling with enhanced settings
     const lenisInstance = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      duration: 1.6,  // Increased for smoother transitions
+      easing: (t) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t)), // Improved easing function
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 2,
+      wheelMultiplier: 1.2,  // Slightly increased for better responsiveness
+      touchMultiplier: 2.5,  // Enhanced touch response
       infinite: false,
+      lerp: 0.1,  // Added linear interpolation for smoother feel
+      syncTouch: true, // Better touch synchronization
     });
 
-    // Set up the animation frame for Lenis
+    // Optimized animation frame for Lenis
     function raf(time: number) {
       lenisInstance.raf(time);
       reqIdRef.current = requestAnimationFrame(raf);
@@ -33,14 +35,23 @@ export function useSmoothScroll() {
     reqIdRef.current = requestAnimationFrame(raf);
     setLenis(lenisInstance);
 
-    // Update ScrollTrigger when Lenis scrolls
-    lenisInstance.on('scroll', ScrollTrigger.update);
+    // Enhanced ScrollTrigger integration
+    lenisInstance.on('scroll', (e: any) => {
+      ScrollTrigger.update();
+      // Make scroll data globally available
+      window.scrollData = {
+        current: e.current,
+        velocity: e.velocity,
+        progress: e.progress,
+        direction: e.direction,
+      };
+    });
 
-    // Make ScrollTrigger use Lenis's scroll position
+    // Advanced ScrollTrigger proxy settings
     ScrollTrigger.scrollerProxy(document.documentElement, {
       scrollTop(value) {
         if (arguments.length) {
-          lenisInstance.scrollTo(value || 0);
+          lenisInstance.scrollTo(value || 0, { immediate: true });
         }
         return lenisInstance.scroll;
       },
@@ -55,21 +66,28 @@ export function useSmoothScroll() {
       pinType: document.documentElement.style.transform ? 'transform' : 'fixed',
     });
 
-    // Refresh ScrollTrigger on resize
+    // Enhanced resize observer for responsive animations
     const resizeObserver = new ResizeObserver(() => {
       ScrollTrigger.refresh();
+      lenisInstance.resize(); // Make sure Lenis adapts to new dimensions
     });
 
     resizeObserver.observe(document.documentElement);
 
-    // Clean up
+    // Store lenis instance in window for global access
+    (window as any).lenis = lenisInstance;
+
+    // Clean up with enhanced memory management
     return () => {
       if (reqIdRef.current) {
         cancelAnimationFrame(reqIdRef.current);
+        reqIdRef.current = null;
       }
       lenisInstance.destroy();
       resizeObserver.disconnect();
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      delete (window as any).lenis;
+      delete (window as any).scrollData;
     };
   }, []);
 

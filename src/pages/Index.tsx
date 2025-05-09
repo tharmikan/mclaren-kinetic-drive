@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+
+import React, { useEffect, useRef, useState } from 'react';
 import HeroSection from '@/components/HeroSection';
 import ModelSection from '@/components/ModelSection';
 import SpeedSection from '@/components/SpeedSection';
@@ -13,61 +14,108 @@ const Index = () => {
   // Initialize Lenis smooth scrolling
   const { lenis } = useSmoothScroll();
   const mainRef = useRef<HTMLDivElement>(null);
+  const progressBarRef = useRef<HTMLDivElement>(null);
   
   // Scroll to top button functionality
-  const [showScrollButton, setShowScrollButton] = React.useState(false);
+  const [showScrollButton, setShowScrollButton] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   
+  // Enhanced scroll tracking
   useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > window.innerHeight) {
+    const updateScrollProgress = () => {
+      const scrollTotal = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPosition = window.scrollY;
+      const progress = (scrollPosition / scrollTotal) * 100;
+      setScrollProgress(progress);
+      
+      if (scrollPosition > window.innerHeight * 0.5) {
         setShowScrollButton(true);
       } else {
         setShowScrollButton(false);
       }
     };
     
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', updateScrollProgress);
+    return () => window.removeEventListener('scroll', updateScrollProgress);
   }, []);
   
   useEffect(() => {
-    // Set up GSAP animations
+    // Enhanced GSAP animations with intersection observer
     if (!mainRef.current) return;
 
-    // Animate sections on scroll
-    const sections = mainRef.current.querySelectorAll('section');
-    sections.forEach((section) => {
-      gsap.fromTo(
-        section.querySelectorAll('.animate-on-scroll'),
-        { 
-          y: 50, 
-          opacity: 0 
-        },
-        { 
-          y: 0, 
-          opacity: 1,
-          duration: 1,
-          stagger: 0.2,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: section,
-            start: 'top 70%',
-            end: 'bottom 20%',
-            toggleActions: 'play none none reverse'
+    // Create and setup intersection observer for advanced reveal animations
+    const revealElements = mainRef.current.querySelectorAll('.reveal-up, .reveal-left, .reveal-right, .stagger-children');
+    
+    const revealObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+          } else {
+            // Uncomment to remove animation when out of view
+            // entry.target.classList.remove('is-visible');
           }
-        }
-      );
+        });
+      },
+      { 
+        threshold: 0.15,
+        rootMargin: "0px 0px -10% 0px"
+      }
+    );
+    
+    revealElements.forEach(element => {
+      revealObserver.observe(element);
+    });
+    
+    // Enhanced magnetic effect for interactive elements
+    const magneticElements = document.querySelectorAll('.magnetic');
+    
+    magneticElements.forEach(elem => {
+      elem.addEventListener('mousemove', (e) => {
+        const target = e.currentTarget as HTMLElement;
+        const rect = target.getBoundingClientRect();
+        const x = e.clientX - rect.left - rect.width / 2;
+        const y = e.clientY - rect.top - rect.height / 2;
+        gsap.to(target, {
+          duration: 0.3,
+          x: x * 0.2,
+          y: y * 0.2,
+          ease: "power2.out"
+        });
+      });
+      
+      elem.addEventListener('mouseleave', (e) => {
+        const target = e.currentTarget as HTMLElement;
+        gsap.to(target, {
+          duration: 0.5,
+          x: 0,
+          y: 0,
+          ease: "elastic.out(1, 0.3)"
+        });
+      });
     });
 
+    // Progress bar effect
+    if (progressBarRef.current) {
+      gsap.to(progressBarRef.current, {
+        width: scrollProgress + "%",
+        ease: "power1.out",
+        duration: 0.3
+      });
+    }
+    
     return () => {
-      // Clean up animations
+      revealObserver.disconnect();
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
-  }, [lenis]);
+  }, [lenis, scrollProgress]);
   
   const scrollToTop = () => {
     if (lenis) {
-      lenis.scrollTo(0, { duration: 1.5 });
+      lenis.scrollTo(0, { 
+        duration: 1.5,
+        easing: (t: number) => 1 - Math.pow(1 - t, 3) // Cubic ease out
+      });
     }
   };
 
@@ -76,6 +124,15 @@ const Index = () => {
       ref={mainRef}
       className="min-h-screen bg-mclaren-dark custom-scrollbar overflow-x-hidden"
     >
+      {/* Scroll Progress Indicator */}
+      <div className="scroll-progress-container">
+        <div 
+          ref={progressBarRef} 
+          className="scroll-progress-bar" 
+          style={{ width: `${scrollProgress}%` }}
+        />
+      </div>
+      
       <Navbar />
       <main>
         <HeroSection />
@@ -85,16 +142,16 @@ const Index = () => {
         
         <section id="history" className="section-padding text-center">
           <div className="container mx-auto max-w-4xl">
-            <h2 className="text-4xl md:text-5xl font-racing font-bold mb-8 text-gradient animate-on-scroll">
+            <h2 className="text-4xl md:text-5xl font-racing font-bold mb-8 text-gradient reveal-up">
               A Legacy of Excellence
             </h2>
-            <p className="text-gray-300 text-lg mb-10 animate-on-scroll">
+            <p className="text-gray-300 text-lg mb-10 reveal-up">
               From our Formula 1 origins to our groundbreaking road cars, McLaren's history 
               is defined by a relentless pursuit of perfection and innovation.
             </p>
             <a 
               href="#" 
-              className="inline-block bg-mclaren-dark-gray/50 hover:bg-mclaren-orange/90 text-white font-medium py-3 px-6 rounded-md transition-colors duration-300 animate-on-scroll"
+              className="inline-block bg-mclaren-dark-gray/50 hover:bg-mclaren-orange/90 text-white font-medium py-3 px-6 rounded-md transition-colors duration-300 reveal-up hover-lift"
             >
               Explore Our Heritage
             </a>
@@ -106,7 +163,7 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <div className="mb-6 md:mb-0">
-              <a href="#" className="font-racing text-xl font-bold text-white">
+              <a href="#" className="font-racing text-xl font-bold text-white magnetic">
                 McLaren<span className="text-mclaren-orange">.</span>
               </a>
               <p className="text-gray-400 mt-2 text-sm">
@@ -119,7 +176,7 @@ const Index = () => {
                 <a 
                   key={item}
                   href={`#${item.toLowerCase()}`}
-                  className="text-gray-400 hover:text-mclaren-orange transition-colors"
+                  className="text-gray-400 hover:text-mclaren-orange transition-colors magnetic"
                 >
                   {item}
                 </a>
@@ -129,10 +186,10 @@ const Index = () => {
         </div>
       </footer>
       
-      {/* Scroll to top button */}
+      {/* Enhanced Scroll to top button */}
       <button 
         onClick={scrollToTop} 
-        className={`fixed bottom-8 right-8 bg-mclaren-orange hover:bg-mclaren-orange-dark p-3 rounded-full shadow-lg transition-all duration-300 z-30 ${
+        className={`fixed bottom-8 right-8 bg-mclaren-orange hover:bg-mclaren-orange-dark p-3 rounded-full shadow-lg transition-all duration-300 z-30 magnetic ${
           showScrollButton ? 'opacity-100 scale-100' : 'opacity-0 scale-75 pointer-events-none'
         }`}
         aria-label="Scroll to top"
