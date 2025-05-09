@@ -1,8 +1,7 @@
-
 import React, { useEffect, useRef } from 'react';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap-trial/ScrollTrigger';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 type ModelType = {
   id: number;

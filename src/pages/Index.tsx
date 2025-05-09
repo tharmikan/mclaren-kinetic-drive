@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react';
 import HeroSection from '@/components/HeroSection';
 import ModelSection from '@/components/ModelSection';
@@ -8,7 +7,7 @@ import Navbar from '@/components/Navbar';
 import { ArrowUp } from 'lucide-react';
 import { useSmoothScroll } from '@/hooks/useSmoothScroll';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap-trial/ScrollTrigger';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 const Index = () => {
   // Initialize Lenis smooth scrolling

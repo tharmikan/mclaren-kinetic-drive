@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from 'react';
 import Lenis from '@studio-freight/lenis';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap-trial/ScrollTrigger';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 // Register the ScrollTrigger plugin
 gsap.registerPlugin(ScrollTrigger);
@@ -20,7 +20,6 @@ export function useSmoothScroll() {
       gestureOrientation: 'vertical',
       smoothWheel: true,
       wheelMultiplier: 1,
-      smoothTouch: false,
       touchMultiplier: 2,
       infinite: false,
     });

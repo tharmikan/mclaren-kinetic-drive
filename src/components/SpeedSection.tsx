@@ -1,8 +1,7 @@
-
 import React, { useEffect, useRef } from 'react';
 import { Gauge } from 'lucide-react';
 import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap-trial/ScrollTrigger';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 type SpeedSpecType = {
   title: string;
