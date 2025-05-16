@@ -47,6 +47,11 @@ const HeroSection = () => {
     if (taglineRef.current) {
       const taglineWords = taglineRef.current.querySelectorAll('.tagline-word');
       
+      // Set data-text attribute for shadow effect
+      taglineWords.forEach(word => {
+        word.setAttribute('data-text', word.textContent || '');
+      });
+      
       gsap.set(taglineWords, { 
         transformPerspective: 1000,
         transformStyle: "preserve-3d"
@@ -171,24 +176,24 @@ const HeroSection = () => {
       ref={sectionRef} 
       className="relative h-screen flex items-center justify-center overflow-hidden"
     >
-      {/* Enhanced Background with Darker Overlay */}
+      {/* Enhanced Background with Darker Overlay for better text contrast */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-t from-mclaren-dark via-mclaren-dark/80 to-mclaren-dark/60 z-10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-mclaren-dark via-mclaren-dark/90 to-mclaren-dark/70 z-10" />
         <div 
           ref={backgroundRef}
-          className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1634543392603-d55409339466?q=80&w=1632&auto=format&fit=crop')] bg-cover bg-center parallax-deep brightness-75"
+          className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1634543392603-d55409339466?q=80&w=1632&auto=format&fit=crop')] bg-cover bg-center parallax-deep brightness-70"
         />
       </div>
 
-      {/* Animated 3D Tagline */}
+      {/* Animated 3D Tagline with improved visibility */}
       <div 
         ref={taglineRef}
         className="absolute top-16 left-0 right-0 z-30 flex justify-center items-center overflow-hidden"
       >
         <div className="flex space-x-4 md:space-x-6 perspective-1000 tagline-3d">
-          <span className="tagline-word font-racing text-lg md:text-2xl lg:text-3xl text-white font-bold text-shadow-lg">Precision.</span>
-          <span className="tagline-word font-racing text-lg md:text-2xl lg:text-3xl text-mclaren-orange font-bold text-shadow-lg">Power.</span>
-          <span className="tagline-word font-racing text-lg md:text-2xl lg:text-3xl text-white font-bold text-shadow-lg">Perfection.</span>
+          <span className="tagline-word font-racing text-xl md:text-3xl lg:text-4xl text-white font-bold text-shadow-lg">Precision.</span>
+          <span className="tagline-word font-racing text-xl md:text-3xl lg:text-4xl text-mclaren-orange font-bold text-shadow-lg">Power.</span>
+          <span className="tagline-word font-racing text-xl md:text-3xl lg:text-4xl text-white font-bold text-shadow-lg">Perfection.</span>
         </div>
       </div>
 
