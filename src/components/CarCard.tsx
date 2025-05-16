@@ -1,5 +1,5 @@
 
-import React, { useRef } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { CarType } from '@/data/mclarenCars';
@@ -10,49 +10,21 @@ interface CarCardProps {
 
 export const CarCard = ({ car }: CarCardProps) => {
   const navigate = useNavigate();
-  const cardRef = useRef<HTMLDivElement>(null);
-  
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    
-    // Calculate rotation based on mouse position
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const rotateX = (y - centerY) / 20;
-    const rotateY = (centerX - x) / 20;
-    
-    // Apply the transformation
-    cardRef.current.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
-  };
-  
-  const handleMouseLeave = () => {
-    if (!cardRef.current) return;
-    
-    // Reset the transformation
-    cardRef.current.style.transform = 'perspective(1000px) rotateX(0) rotateY(0)';
-  };
 
   return (
     <Card 
-      ref={cardRef}
-      className="overflow-hidden bg-mclaren-dark-gray/40 border-mclaren-dark-gray tilt-element hover-lift cursor-pointer rounded-lg shadow-lg"
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      className="overflow-hidden bg-mclaren-dark-gray/40 border-mclaren-dark-gray rounded-lg shadow-lg cursor-pointer"
       onClick={() => navigate(`/car/${car.slug}`)}
     >
       <div className="h-[220px] overflow-hidden">
         <img 
           src={car.imageUrl} 
           alt={car.name} 
-          className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+          className="w-full h-full object-cover"
         />
       </div>
       
-      <CardContent className="p-6 tilt-inner">
+      <CardContent className="p-6">
         <h3 className="text-2xl font-racing font-bold mb-2 text-white text-shadow-md">{car.name}</h3>
         <p className="text-mclaren-orange font-medium mb-3">{car.tagline}</p>
         
