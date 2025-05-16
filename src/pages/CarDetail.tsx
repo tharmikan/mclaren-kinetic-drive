@@ -2,8 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
-import { ArrowLeft, ArrowRight, ArrowUp, ChevronLeft } from 'lucide-react';
-import { gsap } from 'gsap';
+import { ArrowLeft, ArrowUp, ChevronLeft } from 'lucide-react';
 import { useSmoothScroll } from '@/hooks/useSmoothScroll';
 import { mclarenCars, CarType } from '@/data/mclarenCars';
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel';
@@ -15,13 +14,12 @@ const CarDetail = () => {
   const { lenis } = useSmoothScroll();
   const [car, setCar] = useState<CarType | null>(null);
   
-  // Refs for animations
-  const mainRef = useRef<HTMLDivElement>(null);
+  // Refs for sections
   const headerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const specListRef = useRef<HTMLDivElement>(null);
-  const featureListRef = useRef<HTMLDivElement>(null);
+  const featureListRef = useRef<HTMLUListElement>(null);
   
   // Scroll to top button functionality
   const [showScrollButton, setShowScrollButton] = useState(false);
@@ -32,10 +30,17 @@ const CarDetail = () => {
     
     if (foundCar) {
       setCar(foundCar);
+      // Set page title
+      document.title = `${foundCar.name} | McLaren`;
     } else {
       // If car not found, navigate to cars listing
       navigate('/cars');
     }
+    
+    // Cleanup
+    return () => {
+      document.title = 'McLaren';
+    };
   }, [slug, navigate]);
   
   // Enhanced scroll tracking
@@ -57,83 +62,6 @@ const CarDetail = () => {
     return () => window.removeEventListener('scroll', updateScrollProgress);
   }, []);
   
-  // Animation effects
-  useEffect(() => {
-    if (!car || !mainRef.current) return;
-    
-    // Header animation
-    gsap.fromTo(
-      headerRef.current,
-      { opacity: 0, y: -50 },
-      { opacity: 1, y: 0, duration: 1, ease: "power3.out" }
-    );
-    
-    // Main image animation
-    gsap.fromTo(
-      imageRef.current,
-      { opacity: 0, scale: 0.9 },
-      { opacity: 1, scale: 1, duration: 1.2, ease: "power3.out", delay: 0.3 }
-    );
-    
-    // Content animation
-    gsap.fromTo(
-      contentRef.current?.children || [],
-      { opacity: 0, y: 30 },
-      { 
-        opacity: 1, 
-        y: 0, 
-        stagger: 0.1, 
-        duration: 0.8, 
-        ease: "power3.out",
-        delay: 0.5
-      }
-    );
-    
-    // Specs animation
-    if (specListRef.current) {
-      gsap.fromTo(
-        specListRef.current.children,
-        { opacity: 0, y: 20 },
-        { 
-          opacity: 1, 
-          y: 0, 
-          stagger: 0.1, 
-          duration: 0.6,
-          scrollTrigger: {
-            trigger: specListRef.current,
-            start: "top 80%",
-          }
-        }
-      );
-    }
-    
-    // Features animation
-    if (featureListRef.current) {
-      gsap.fromTo(
-        featureListRef.current.children,
-        { opacity: 0, x: -20 },
-        { 
-          opacity: 1, 
-          x: 0, 
-          stagger: 0.1, 
-          duration: 0.6,
-          scrollTrigger: {
-            trigger: featureListRef.current,
-            start: "top 80%",
-          }
-        }
-      );
-    }
-    
-    return () => {
-      gsap.killTweensOf([
-        headerRef.current, 
-        imageRef.current, 
-        contentRef.current?.children
-      ]);
-    };
-  }, [car]);
-  
   const scrollToTop = () => {
     if (lenis) {
       lenis.scrollTo(0, { 
@@ -152,14 +80,11 @@ const CarDetail = () => {
   }
 
   return (
-    <div 
-      ref={mainRef}
-      className="min-h-screen bg-mclaren-dark custom-scrollbar overflow-x-hidden"
-    >
+    <div className="min-h-screen bg-mclaren-dark custom-scrollbar overflow-x-hidden">
       {/* Scroll Progress Indicator */}
-      <div className="scroll-progress-container">
+      <div className="fixed top-0 left-0 right-0 h-1 bg-black/30 z-50">
         <div 
-          className="scroll-progress-bar" 
+          className="h-full bg-mclaren-orange transition-all duration-300 ease-out" 
           style={{ width: `${scrollProgress}%` }}
         />
       </div>
@@ -185,12 +110,12 @@ const CarDetail = () => {
         >
           <div className="flex flex-col md:flex-row justify-between items-start md:items-end">
             <div>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-racing font-bold text-gradient mb-2">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-racing font-bold text-white mb-2">
                 {car.name}
               </h1>
               <p className="text-xl text-mclaren-orange mb-4">{car.tagline}</p>
             </div>
-            <div className="bg-mclaren-dark-gray/50 backdrop-blur-sm rounded-lg px-6 py-3 mt-4 md:mt-0">
+            <div className="bg-black/60 backdrop-blur-sm rounded-lg px-6 py-3 mt-4 md:mt-0">
               <span className="text-3xl font-racing font-bold text-white">{car.price}</span>
             </div>
           </div>
@@ -269,7 +194,7 @@ const CarDetail = () => {
             
             {/* Right column - Specs */}
             <div>
-              <Card className="bg-mclaren-dark-gray/30 border-mclaren-dark-gray">
+              <Card className="bg-black/60 backdrop-blur-md border-gray-800">
                 <CardContent className="p-6">
                   <h3 className="text-2xl font-racing font-bold text-white mb-6">Specifications</h3>
                   
@@ -311,24 +236,24 @@ const CarDetail = () => {
         </div>
       </main>
       
-      <footer className="bg-mclaren-dark-gray/50 py-10">
+      <footer className="bg-black/80 backdrop-blur-md py-12">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-6 md:mb-0">
-              <a href="#" className="font-racing text-xl font-bold text-white magnetic">
+            <div className="mb-8 md:mb-0">
+              <a href="/" className="font-racing text-2xl font-bold text-white">
                 McLaren<span className="text-mclaren-orange">.</span>
               </a>
-              <p className="text-gray-400 mt-2 text-sm">
+              <p className="text-gray-400 mt-2">
                 © {new Date().getFullYear()} McLaren Automotive. All rights reserved.
               </p>
             </div>
             
-            <div className="flex space-x-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-12 gap-y-4">
               {["Models", "Performance", "Design", "History"].map((item) => (
                 <a 
                   key={item}
                   href={`/#${item.toLowerCase()}`}
-                  className="text-gray-400 hover:text-mclaren-orange transition-colors magnetic"
+                  className="text-gray-400 hover:text-mclaren-orange transition-colors"
                 >
                   {item}
                 </a>
@@ -338,10 +263,10 @@ const CarDetail = () => {
         </div>
       </footer>
       
-      {/* Enhanced Scroll to top button */}
+      {/* Scroll to top button */}
       <button 
         onClick={scrollToTop} 
-        className={`fixed bottom-8 right-8 bg-mclaren-orange hover:bg-mclaren-orange-dark p-3 rounded-full shadow-lg transition-all duration-300 z-30 magnetic ${
+        className={`fixed bottom-8 right-8 bg-mclaren-orange hover:bg-mclaren-orange-dark p-3 rounded-full shadow-lg transition-all duration-300 z-30 ${
           showScrollButton ? 'opacity-100 scale-100' : 'opacity-0 scale-75 pointer-events-none'
         }`}
         aria-label="Scroll to top"

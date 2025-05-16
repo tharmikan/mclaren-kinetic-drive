@@ -3,18 +3,12 @@ import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import { ArrowUp } from 'lucide-react';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useSmoothScroll } from '@/hooks/useSmoothScroll';
 import { CarCard } from '@/components/CarCard';
 import { mclarenCars } from '@/data/mclarenCars';
-import { Card, CardContent } from '@/components/ui/card';
 
 const Cars = () => {
   const { lenis } = useSmoothScroll();
-  const mainRef = useRef<HTMLDivElement>(null);
-  const carGridRef = useRef<HTMLDivElement>(null);
-  const titleRef = useRef<HTMLHeadingElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
   
   // Scroll to top button functionality
@@ -41,51 +35,10 @@ const Cars = () => {
   }, []);
   
   useEffect(() => {
-    if (!mainRef.current) return;
-    
-    // Animate the page title
-    gsap.fromTo(
-      titleRef.current,
-      { opacity: 0, y: 50 },
-      { 
-        opacity: 1, 
-        y: 0, 
-        duration: 1.2,
-        ease: "power3.out"
-      }
-    );
-    
-    // Animate car cards with staggered effect
-    if (carGridRef.current) {
-      gsap.fromTo(
-        carGridRef.current.children,
-        { y: 100, opacity: 0 },
-        { 
-          y: 0, 
-          opacity: 1, 
-          stagger: 0.15, 
-          duration: 0.8,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: carGridRef.current,
-            start: "top 85%",
-          }
-        }
-      );
-    }
-
     // Progress bar effect
     if (progressBarRef.current) {
-      gsap.to(progressBarRef.current, {
-        width: scrollProgress + "%",
-        ease: "power1.out",
-        duration: 0.3
-      });
+      progressBarRef.current.style.width = scrollProgress + "%";
     }
-    
-    return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-    };
   }, [scrollProgress]);
   
   const scrollToTop = () => {
@@ -98,61 +51,56 @@ const Cars = () => {
   };
 
   return (
-    <div 
-      ref={mainRef} 
-      className="min-h-screen bg-mclaren-dark custom-scrollbar overflow-x-hidden"
-    >
+    <div className="min-h-screen bg-mclaren-dark bg-[url('https://images.unsplash.com/photo-1626409325900-31965771d82a?q=80&w=1632&auto=format&fit=crop&blur=2')] bg-fixed bg-cover bg-center bg-blend-overlay custom-scrollbar overflow-x-hidden">
       {/* Scroll Progress Indicator */}
-      <div className="scroll-progress-container">
+      <div className="fixed top-0 left-0 right-0 h-1 bg-black/30 z-50">
         <div 
           ref={progressBarRef} 
-          className="scroll-progress-bar" 
-          style={{ width: `${scrollProgress}%` }}
+          className="h-full bg-mclaren-orange transition-all duration-300 ease-out"
         />
       </div>
       
       <Navbar />
       
-      <main className="pt-24 pb-20">
-        <section className="section-padding">
-          <div className="container mx-auto">
-            <h1 
-              ref={titleRef}
-              className="text-4xl md:text-5xl lg:text-6xl font-racing font-bold mb-16 text-center text-gradient"
-            >
-              McLaren Collection
+      <main className="pt-32 pb-24">
+        <section className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-screen-lg mx-auto text-center mb-16">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-racing font-bold mb-6 text-white">
+              McLaren <span className="text-mclaren-orange">Collection</span>
             </h1>
-            
-            <div 
-              ref={carGridRef}
-              className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10"
-            >
-              {mclarenCars.map((car) => (
-                <CarCard key={car.id} car={car} />
-              ))}
-            </div>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto">
+              Explore our lineup of legendary supercars, meticulously engineered for uncompromising performance and breathtaking design.
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-12">
+            {mclarenCars.map((car) => (
+              <div key={car.id} className="transform transition-all duration-500">
+                <CarCard car={car} />
+              </div>
+            ))}
           </div>
         </section>
       </main>
       
-      <footer className="bg-mclaren-dark-gray/50 py-10">
+      <footer className="bg-black/80 backdrop-blur-md py-12">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-6 md:mb-0">
-              <a href="#" className="font-racing text-xl font-bold text-white magnetic">
+            <div className="mb-8 md:mb-0">
+              <a href="/" className="font-racing text-2xl font-bold text-white">
                 McLaren<span className="text-mclaren-orange">.</span>
               </a>
-              <p className="text-gray-400 mt-2 text-sm">
+              <p className="text-gray-400 mt-2">
                 © {new Date().getFullYear()} McLaren Automotive. All rights reserved.
               </p>
             </div>
             
-            <div className="flex space-x-8">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-x-12 gap-y-4">
               {["Models", "Performance", "Design", "History"].map((item) => (
                 <a 
                   key={item}
                   href={`/#${item.toLowerCase()}`}
-                  className="text-gray-400 hover:text-mclaren-orange transition-colors magnetic"
+                  className="text-gray-400 hover:text-mclaren-orange transition-colors"
                 >
                   {item}
                 </a>
@@ -162,10 +110,10 @@ const Cars = () => {
         </div>
       </footer>
       
-      {/* Enhanced Scroll to top button */}
+      {/* Scroll to top button */}
       <button 
         onClick={scrollToTop} 
-        className={`fixed bottom-8 right-8 bg-mclaren-orange hover:bg-mclaren-orange-dark p-3 rounded-full shadow-lg transition-all duration-300 z-30 magnetic ${
+        className={`fixed bottom-8 right-8 bg-mclaren-orange hover:bg-mclaren-orange-dark p-3 rounded-full shadow-lg transition-all duration-300 z-30 ${
           showScrollButton ? 'opacity-100 scale-100' : 'opacity-0 scale-75 pointer-events-none'
         }`}
         aria-label="Scroll to top"
